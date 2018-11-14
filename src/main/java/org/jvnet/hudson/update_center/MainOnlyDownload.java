@@ -54,14 +54,17 @@ public class MainOnlyDownload {
     private void run() throws Exception {
         MavenRepository repo = DefaultMavenRepositoryBuilder.getInstance();
         repo = new LimitedMavenRepository(repo, version, maxVersions);
-        for (PluginHistory hpi : repo.listHudsonPlugins()) {
-            try {
-                toDownloadDir(hpi);
-                numPlugins++;
-            } catch (Exception e) {
-                System.out.println("SKIPPING " + hpi.latest().getGavId() + " (ERROR: " + e.getLocalizedMessage() + ")");
-            }
-        }
+        repo.listHudsonPlugins()
+                .stream()
+                .parallel()
+                .forEach(hpi -> {
+                    try {
+                        toDownloadDir(hpi);
+                        numPlugins++;
+                    } catch (Exception e) {
+                        System.out.println("SKIPPING " + hpi.latest().getGavId() + " (ERROR: " + e.getLocalizedMessage() + ")");
+                    }
+                });
         System.out.println();
         System.out.println("number of plugins  = " + numPlugins);
         System.out.println("number of versions = " + numVersions);
@@ -71,27 +74,35 @@ public class MainOnlyDownload {
     private void toDownloadDir(PluginHistory hpi) throws IOException {
         Plugin plugin = new Plugin(hpi);
         if (plugin.latest != null) {
-            System.out.print("=> " + hpi.artifactId + " ");
+            System.out.println("=> " + hpi.artifactId + " ");
             String a = hpi.artifactId;
-            for (HPI v : hpi.artifacts.values()) {
-                toDownloadDir(v.resolve().toPath(), Paths.get(a, v.version, a + ".hpi"));
-                System.out.print("# ");
+            hpi.artifacts.values().forEach(v -> {
+                toDownloadDir(v, Paths.get(a, v.version, a + ".hpi"));
                 numVersions++;
-            }
-            System.out.println();
+            });
         }
     }
 
-    private void toDownloadDir(Path src, Path rel) throws IOException {
-        if (!Files.isRegularFile(src)) {
-            throw new Error("repository corrupted: file does not exists: " + src.toAbsolutePath());
-        }
+    private void toDownloadDir(HPI v, Path rel) {
         Path dst = download.resolve(rel).toAbsolutePath();
-        if (!Files.exists(dst) || !Files.isSameFile(src, dst)) {
-            Files.createDirectories(dst.getParent());
-            Files.createLink(dst, src);
+        try {
+            Path src = v.resolve().toPath();
+            if (!Files.isRegularFile(src)) {
+                throw new Error("repository corrupted: file does not exists: " + src.toAbsolutePath());
+            }
+            if (!Files.exists(dst) || !Files.isSameFile(src, dst)) {
+                Files.createDirectories(dst.getParent());
+                try {
+                    Files.createLink(dst, src);
+                } catch (Exception e) {
+                    // silently try to copy...
+                    Files.copy(src, dst);
+                }
+            }
+            numBytes += Files.size(dst);
+        } catch (IOException e) {
+            throw new Error("could not link or copy the plugin: " + v.artifact.artifactId + " -> " + dst, e);
         }
-        numBytes += Files.size(dst);
     }
 
     static {
@@ -137,6 +148,7 @@ public class MainOnlyDownload {
         public Collection<PluginHistory> listHudsonPlugins() throws PlexusContainerException, ComponentLookupException, IOException, UnsupportedExistingLuceneIndexException, AbstractArtifactResolutionException {
             return base.listHudsonPlugins()//
                     .stream()//
+                    .parallel()
                     .map(this::capAndLimit)//
                     .filter(h -> !h.artifacts.isEmpty())//
                     .collect(Collectors.toList());
