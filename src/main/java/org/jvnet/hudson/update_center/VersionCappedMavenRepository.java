@@ -1,20 +1,15 @@
 package org.jvnet.hudson.update_center;
 
-import hudson.util.VersionNumber;
-import org.apache.maven.artifact.resolver.AbstractArtifactResolutionException;
-import org.codehaus.plexus.PlexusContainerException;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-import org.sonatype.nexus.index.ArtifactInfo;
-import org.sonatype.nexus.index.context.UnsupportedExistingLuceneIndexException;
+import hudson.util.*;
+import org.apache.maven.artifact.resolver.*;
+import org.codehaus.plexus.*;
+import org.codehaus.plexus.component.repository.exception.*;
+import org.sonatype.nexus.index.*;
+import org.sonatype.nexus.index.context.*;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
+import java.io.*;
+import java.util.*;
+import java.util.Map.*;
 
 /**
  * Delegating {@link MavenRepository} to limit the data to the subset compatible with the specific version.
@@ -77,8 +72,8 @@ public class VersionCappedMavenRepository extends MavenRepository {
                         }
                         continue;
                     }
-                } catch (IOException x) {
-                    x.printStackTrace();
+                } catch (Exception x) {
+                    System.out.println("ERROR: problem reading "+e.getValue().toString());
                 }
             }
 

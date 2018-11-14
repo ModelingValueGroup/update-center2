@@ -51,7 +51,7 @@ public class MavenArtifactSource extends ArtifactSource {
                 throw new IOException("No entry " + path + " found in " + artifact);
             }
             return jar.getInputStream(e);
-        } catch (IOException x) {
+        } catch (Exception x) {
             throw new IOException("Failed read from " + f + ": " + x.getMessage(), x);
         }
     }

@@ -23,35 +23,14 @@
  */
 package org.jvnet.hudson.update_center;
 
-import hudson.util.VersionNumber;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.kohsuke.args4j.ClassParser;
-import org.kohsuke.args4j.CmdLineException;
-import org.kohsuke.args4j.CmdLineParser;
-import org.kohsuke.args4j.Option;
-import org.kohsuke.args4j.spi.OptionHandler;
+import hudson.util.*;
+import net.sf.json.*;
+import org.apache.commons.io.*;
+import org.kohsuke.args4j.*;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.io.*;
+import java.lang.reflect.*;
+import java.util.*;
 
 /**
  * @author Kohsuke Kawaguchi
@@ -425,38 +404,40 @@ public class Main {
                 // Gather the plugin properties from the plugin file and the wiki
                 Plugin plugin = new Plugin(hpi);
 
-                pluginToDocumentationUrl.put(plugin.artifactId, plugin.getPluginUrl());
+                if (plugin.latest!=null) {
+                    pluginToDocumentationUrl.put(plugin.artifactId, plugin.getPluginUrl());
 
-                JSONObject json = plugin.toJSON();
-                if (json == null) {
-                    System.out.println("Skipping due to lack of checksums: " + plugin.getName());
-                    continue;
-                }
-                System.out.println("=> " + hpi.latest().getGavId());
-                plugins.put(plugin.artifactId, json);
-                latest.add(plugin.artifactId+".hpi", plugin.latest.getURL().getPath());
-
-                if (download!=null) {
-                    for (HPI v : hpi.artifacts.values()) {
-                        stage(v, new File(download, "plugins/" + hpi.artifactId + "/" + v.version + "/" + hpi.artifactId + ".hpi"));
+                    JSONObject json = plugin.toJSON();
+                    if (json == null) {
+                        System.out.println("Skipping due to lack of checksums: " + plugin.getName());
+                        continue;
                     }
-                    if (!hpi.artifacts.isEmpty())
-                        createLatestSymlink(hpi, plugin.latest);
-                }
+                    System.out.println("=> " + hpi.latest().getGavId());
+                    plugins.put(plugin.artifactId, json);
+                    latest.add(plugin.artifactId+".hpi", plugin.latest.getURL().getPath());
 
-                if (wwwDownload!=null) {
-                    String permalink = String.format("/latest/%s.hpi", plugin.artifactId);
-                    buildIndex(new File(wwwDownload, "plugins/" + hpi.artifactId), hpi.artifactId, hpi.artifacts.values(), permalink);
-                }
-
-                if (redirector != null) {
-                    for (HPI v : hpi.artifacts.values()) {
-                        redirector.recordRedirect(v, "plugins/" + hpi.artifactId + "/" + v.version + "/" + hpi.artifactId + ".hpi");
+                    if (download!=null) {
+                        for (HPI v : hpi.artifacts.values()) {
+                            stage(v, new File(download, "plugins/" + hpi.artifactId + "/" + v.version + "/" + hpi.artifactId + ".hpi"));
+                        }
+                        if (!hpi.artifacts.isEmpty())
+                            createLatestSymlink(hpi, plugin.latest);
                     }
-                }
 
-                validCount++;
-            } catch (IOException e) {
+                    if (wwwDownload!=null) {
+                        String permalink = String.format("/latest/%s.hpi", plugin.artifactId);
+                        buildIndex(new File(wwwDownload, "plugins/" + hpi.artifactId), hpi.artifactId, hpi.artifacts.values(), permalink);
+                    }
+
+                    if (redirector != null) {
+                        for (HPI v : hpi.artifacts.values()) {
+                            redirector.recordRedirect(v, "plugins/" + hpi.artifactId + "/" + v.version + "/" + hpi.artifactId + ".hpi");
+                        }
+                    }
+
+                    validCount++;
+                }
+            } catch (Exception e) {
                 e.printStackTrace();
                 // move on to the next plugin
             }
