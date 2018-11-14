@@ -87,32 +87,32 @@
     <dependency>
       <groupId>dom4j</groupId>
       <artifactId>dom4j</artifactId>
-      <version>1.6.1</version>
+      <version>20040902.021138</version>
     </dependency>
     <dependency>
       <groupId>com.squareup.okhttp3</groupId>
       <artifactId>okhttp-urlconnection</artifactId>
-      <version>3.10.0</version>
+      <version>3.11.0</version>
     </dependency>
     <dependency>
       <groupId>jaxen</groupId>
       <artifactId>jaxen</artifactId>
-      <version>1.1.1</version>
+      <version>1.2.0-atlassian-2</version>
     </dependency>
     <dependency>
       <groupId>org.kohsuke</groupId>
       <artifactId>github-api</artifactId>
-      <version>1.93</version>
+      <version>1.95</version>
     </dependency>
     <dependency>
       <groupId>com.sun.xml.bind</groupId>
       <artifactId>jaxb-impl</artifactId>
-      <version>2.1.6</version>
+      <version>2.4.0-b180830.0438</version>
     </dependency>
     <dependency>
       <groupId>org.kohsuke.stapler</groupId>
       <artifactId>json-lib</artifactId>
-      <version>2.1-rev7</version>
+      <version>2.4-jenkins-3</version>
     </dependency>
     <dependency>
       <groupId>com.google.code.gson</groupId>
@@ -127,7 +127,12 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
-      <version>3.7</version>
+      <version>3.8.1</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-httpclient</groupId>
+      <artifactId>commons-httpclient</artifactId>
+      <version>3.1-jenkins-1</version>
     </dependency>
     <dependency>
       <groupId>commons-codec</groupId>
@@ -142,7 +147,7 @@
     <dependency>
       <groupId>org.sonatype.nexus</groupId>
       <artifactId>nexus-indexer</artifactId>
-      <version>2.0.0</version>
+      <version>3.1-M1</version>
       <exclusions>
         <exclusion><!-- instead we pick this up from maven-compat -->
           <groupId>org.apache.maven</groupId>
@@ -157,7 +162,7 @@
     <dependency><!-- this version doesn't have ugly snapshot Google collection dependency -->
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-container-default</artifactId>
-      <version>1.5.5</version>
+      <version>1.7.1</version>
       <exclusions>
         <exclusion>
           <groupId>com.google.collections</groupId>
@@ -168,12 +173,12 @@
     <dependency>
       <groupId>org.apache.maven.wagon</groupId>
       <artifactId>wagon-http</artifactId>
-      <version>1.0-beta-5</version>
+      <version>3.2.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-compat</artifactId>
-      <version>3.0-alpha-2</version>
+      <version>3.6.0</version>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci</groupId>
@@ -188,12 +193,12 @@
     <dependency>
       <groupId>org.apache.ant</groupId>
       <artifactId>ant</artifactId>
-      <version>1.8.1</version>
+      <version>1.10.5</version>
     </dependency>
     <dependency>
       <groupId>jetty</groupId>
       <artifactId>jetty-util</artifactId>
-      <version>6.0.0rc1</version>
+      <version>6.0.2</version>
     </dependency>
     <dependency>
       <groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
@@ -203,7 +208,7 @@
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <version>1.10.19</version>
+      <version>2.23.0</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
