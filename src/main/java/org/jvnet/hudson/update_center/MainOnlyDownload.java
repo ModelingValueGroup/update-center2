@@ -146,22 +146,21 @@ public class MainOnlyDownload {
 
         @Override
         public Collection<PluginHistory> listHudsonPlugins() throws PlexusContainerException, ComponentLookupException, IOException, UnsupportedExistingLuceneIndexException, AbstractArtifactResolutionException {
-            return base.listHudsonPlugins()//
-                    .stream()//
-                    .parallel()
-                    .map(this::capAndLimit)//
-                    .filter(h -> !h.artifacts.isEmpty())//
+            return base.listHudsonPlugins()
+                    .stream()
+                    .map(this::capAndLimit)
+                    .filter(h -> !h.artifacts.isEmpty())
                     .collect(Collectors.toList());
         }
 
         private PluginHistory capAndLimit(PluginHistory hist) {
             PluginHistory newHist = new PluginHistory(hist.artifactId);
             newHist.groupId.addAll(hist.groupId);
-            hist.artifacts.values()//
-                    .stream()//
-                    .sorted(HPI_DESCENDING)//
-                    .filter(this::needInclusion)//
-                    .limit(maxVersions)//
+            hist.artifacts.values()
+                    .stream()
+                    .sorted(HPI_DESCENDING)
+                    .filter(this::needInclusion)
+                    .limit(maxVersions)
                     .forEach(newHist::addArtifact);
             return newHist;
         }
