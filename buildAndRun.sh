@@ -13,7 +13,7 @@ versionExists="$(curl -s 'https://repo.jenkins-ci.org/api/search/versions?g=org.
                     | fgrep "$MIN_VERSION")"
 [[ "$versionExists" != "" ]] ||  { echo "the jenkins version $MIN_VERSION does not exist" >&2 ; exit 1 ; }
 
-./buils.sh
+./build.sh
 
 echo "prepare download dir..." >&2
 rm    -rf "$DOWNLOAD_DIR"
